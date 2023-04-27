@@ -56,7 +56,7 @@ class ProductManager {
     fs.writeFileSync(`backEnd/products.json`, JSON.stringify(this.products),{encoding:`utf-8`})
  
   }
-
+  
 }
 getProductById = (code) => {
     let codExist = this.products.find((product) => product.code == code);
@@ -67,7 +67,30 @@ getProductById = (code) => {
       return "not found";
     }
   };
+
+  async updateProduct(id, update) {
+    await this.getProducts();
+    const productExist = this.products.findIndex((product) => product.id === id);
+    if (productExist === -1) {
+      console.log(`No existe producto con el id ${id}`);
+    }
+    const updatedProduct = Object.assign({}, this.products[productExist], update);
+    this.products[productExist] = updatedProduct;
+    await fs.writeFile("./products.json", JSON.stringify(this.products),{encoding:`utf-8`});
+  }
+
+  async deleteProduct(id) {
+    await this.getProducts();
+    const productIndex = this.products.findIndex((product) => product.id === id);
+    if (productIndex === -1) {
+      console.log(`Product with id ${id} not found`);
+    }
+    this.products.splice(productIndex, 1);
+    await fs.writeFile("./products.json", JSON.stringify(this.products),{encoding:`utf-8`});
+  }
 }
+
+
 
 
 
