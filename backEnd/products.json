@@ -1,1 +1,1 @@
-[{"title":"Pollo","description":"Ave","price":100,"thumbnail":"Sin imagen","code":"a1","id":0,"stock":20},{"title":"gallina","description":"Ave","price":100,"thumbnail":"Sin imagen","code":"a13","id":0,"stock":20}]
+[{"title":"Pollo","description":"Ave","price":100,"thumbnail":"Sin imagen","code":"a1","id":"a1","stock":20},{"title":"gallina","description":"Ave","price":100,"thumbnail":"Sin imagen","code":"a13","id":"a13","stock":20}]

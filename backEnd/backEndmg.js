@@ -11,7 +11,7 @@ class ProductManager {
   }
 
   async getProducts() {
-      const dataProducts = await fs.readFile(this.path, 'utf8', (err,data)=> { // este callback hace que la asincronia se respete FUNDAMENTAL
+      await fs.readFile(this.path, 'utf8', (err,data)=> { // este callback hace que la asincronia se respete FUNDAMENTAL
            if(err){
             console.log('error al leer archivo', err)
           }else{
@@ -25,16 +25,22 @@ class ProductManager {
 
   async deleteProduct(id) {
     await this.getProducts();
-    const productIndex = this.products.findIndex(
-      (product) => this.product.code=== id
-    );
+    const productIndex = this.products.findIndex((product) => product.id === id);
     if (productIndex === -1) {
-      console.log(`Product with id ${id} not found`);
-    }else{
-      this.products.splice(productIndex, 1);
-     }
-    
+      throw new Error(`Product with id ${id} not found`);
     }
+    this.products.splice(productIndex, 1);
+    //await fs.writeFile(this.path, JSON.stringify(this.products), "utf-8");
+
+    fs.writeFileSync(this.path, JSON.stringify(this.products), function (err) {
+        if (err) {console.log(`error`, err);
+      }else{
+        console.log(`producto eliminado correctamente`)
+      }    
+  });
+  }
+
+  
 
   addProduct = (title, description, price, thumbnail, code, stock) => {
     let codExist = this.products.find((product) => product.code == code);
@@ -71,7 +77,7 @@ class ProductManager {
         price: price,
         thumbnail: thumbnail,
         code: code,
-        id:id,
+        id:code,
         stock: stock,
       });
       fs.writeFileSync(`backEnd/products.json`, JSON.stringify(this.products), {
@@ -93,7 +99,7 @@ class ProductManager {
   async updateProduct(id, update) {
     await this.getProducts();
     const productExist = this.products.findIndex(
-      (product) => this.product.id === id
+      (product) => product.id === id
     );
     if (productExist === -1) {
       console.log(`No existe producto con el id ${id}`);
@@ -116,4 +122,7 @@ let producto = new ProductManager();
 
 producto.addProduct("Pollo", "Ave", 100, "Sin imagen", "a1", 20);
 producto.addProduct("gallina", "Ave", 100, "Sin imagen", "a13", 20);
-//producto.deleteProduct(`a13`);
+producto.addProduct("fideos", "comida", 345345, "Sin imagen", "a21", 5);
+//producto.getProducts();
+
+producto.deleteProduct(`a21`);
