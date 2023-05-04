@@ -34,9 +34,7 @@ class ProductManager {
 
     fs.writeFileSync(this.path, JSON.stringify(this.products), function (err) {
         if (err) {console.log(`error`, err);
-      }else{
-        console.log(`producto eliminado correctamente`)
-      }    
+      }  
   });
   }
 
@@ -103,7 +101,7 @@ class ProductManager {
     );
     if (productExist === -1) {
       console.log(`No existe producto con el id ${id}`);
-    }
+    }else{ 
     const updatedProduct = Object.assign(this.products[productExist], update);
     this.products[productExist] = updatedProduct;
     await fs.writeFile(
@@ -111,6 +109,7 @@ class ProductManager {
       JSON.stringify(this.products),
       `utf-8`
     );
+    }
   }
 
 
@@ -123,6 +122,6 @@ let producto = new ProductManager();
 producto.addProduct("Pollo", "Ave", 100, "Sin imagen", "a1", 20);
 producto.addProduct("gallina", "Ave", 100, "Sin imagen", "a13", 20);
 producto.addProduct("fideos", "comida", 345345, "Sin imagen", "a21", 5);
-//producto.getProducts();
+producto.addProduct("carne", "comida", 345345, "Sin imagen", "a56", 5);
+producto.getProducts();
 
-producto.deleteProduct(`a21`);
