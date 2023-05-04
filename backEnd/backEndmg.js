@@ -1,7 +1,10 @@
 const fs = require(`fs`);
+
 let readFile = fs.readFileSync(`backEnd/products.json`, { encoding: `utf-8` });
 
 console.log(readFile);
+
+
 
 class ProductManager {
   constructor() {
@@ -41,9 +44,9 @@ class ProductManager {
         code: id,
         stock: stock,
       });
-      fs.writeFileSync(`backEnd/products.json`, JSON.stringify(this.products), {
-        encoding: `utf-8`,
-      });
+      fs.writeFileSync(`backEnd/products.json`, JSON.stringify(this.products), function (err, result){
+        if(err) console.log(`error`, err);
+      })
     } else {
       this.products.push({
         title: title,
@@ -102,4 +105,12 @@ class ProductManager {
   }
 }
 
+module.exports = ProductManager
 
+
+
+ let producto = new ProductManager();
+
+producto.addProduct("Pollo", "Ave", 100, "Sin imagen", "a1", 20);
+producto.addProduct("gallina", "Ave", 100, "Sin imagen", "a13", 20);
+producto.deleteProduct(`a13`);
