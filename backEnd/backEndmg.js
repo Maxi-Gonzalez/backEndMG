@@ -23,12 +23,27 @@ class ProductManager {
     return this.products;
   }
 
+  async deleteProduct(id) {
+    await this.getProducts();
+    const productIndex = this.products.findIndex(
+      (product) => this.product.code=== id
+    );
+    if (productIndex === -1) {
+      console.log(`Product with id ${id} not found`);
+    }else{
+      this.products.splice(productIndex, 1);
+     }
+    
+    }
+
   addProduct = (title, description, price, thumbnail, code, stock) => {
     let codExist = this.products.find((product) => product.code == code);
 
+    let id=0
+
     if (codExist) {
       let x = Math.floor(Math.random() * 100);
-      let id = code + x;
+      id = code + x;
       console.log(
         `Codigo ya existente, le asignaremos uno no utilizado y el codigo es ${id}`
       );
@@ -39,9 +54,10 @@ class ProductManager {
         price: price,
         thumbnail: thumbnail,
         code: id,
+        id:id,
         stock: stock,
       });
-      fs.writeFileSync(
+       fs.writeFileSync(
         `backEnd/products.json`,
         JSON.stringify(this.products),
         function (err, result) {
@@ -55,6 +71,7 @@ class ProductManager {
         price: price,
         thumbnail: thumbnail,
         code: code,
+        id:id,
         stock: stock,
       });
       fs.writeFileSync(`backEnd/products.json`, JSON.stringify(this.products), {
@@ -62,8 +79,9 @@ class ProductManager {
       });
     }
   };
-  getProductById = (code) => {
-    let codExist = this.products.find((product) => product.code == code);
+
+  getProductById = (id) => {
+    let codExist = this.products.find((product) => product.id == id);
 
     if (codExist) {
       return codExist;
@@ -75,7 +93,7 @@ class ProductManager {
   async updateProduct(id, update) {
     await this.getProducts();
     const productExist = this.products.findIndex(
-      (product) => product.id === id
+      (product) => this.product.id === id
     );
     if (productExist === -1) {
       console.log(`No existe producto con el id ${id}`);
@@ -89,22 +107,7 @@ class ProductManager {
     );
   }
 
-  async deleteProduct(id) {
-    await this.getProducts();
-    const productIndex = this.products.findIndex(
-      (product) => product.id === id
-    );
-    if (productIndex === -1) {
-      console.log(`Product with id ${id} not found`);
-    }
-    await fs.writeFile(this.path, JSON.stringify(this.products), `utf-8`, (err,data)=> { // este callback hace que la asincronia se respete FUNDAMENTAL
-      if(err){
-       console.log('erroR al eliminar el archivo', err)
-     }else{
-      this.products.splice(productIndex, 1);
-     }
-    });
-  }
+
 }
 
 module.exports = ProductManager;
