@@ -1,0 +1,2 @@
+# Ignora la carpeta node_modules cualquier cosa que este dentro de node modules sera ignorada 
+node_modules/*  
