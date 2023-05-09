@@ -11,39 +11,23 @@ class ProductManager {
   }
 
   async getProducts() {
-      await fs.readFile(this.path, 'utf8', (err,data)=> { // este callback hace que la asincronia se respete FUNDAMENTAL
-           if(err){
-            console.log('error al leer archivo', err)
-          }else{
-            this.products = JSON.parse(data);
-            console.log(data)
-          }
-      });
+    await fs.readFile(this.path, "utf8", (err, data) => {
+      // este callback hace que la asincronia se respete FUNDAMENTAL
+      if (err) {
+        console.log("error al leer archivo", err);
+      } else {
+        this.products = JSON.parse(data);
+        console.log(data);
+      }
+    });
 
     return this.products;
   }
 
-  async deleteProduct(id) {
-    await this.getProducts();
-    const productIndex = this.products.findIndex((product) => product.id === id);
-    if (productIndex === -1) {
-      throw new Error(`Product with id ${id} not found`);
-    }
-    this.products.splice(productIndex, 1);
-    //await fs.writeFile(this.path, JSON.stringify(this.products), "utf-8");
-
-    fs.writeFileSync(this.path, JSON.stringify(this.products), function (err) {
-        if (err) {console.log(`error`, err);
-      }  
-  });
-  }
-
-  
-
   addProduct = (title, description, price, thumbnail, code, stock) => {
     let codExist = this.products.find((product) => product.code == code);
 
-    let id=0
+    let id = 0;
 
     if (codExist) {
       let x = Math.floor(Math.random() * 100);
@@ -58,15 +42,17 @@ class ProductManager {
         price: price,
         thumbnail: thumbnail,
         code: id,
-        id:id,
+        id: id,
         stock: stock,
       });
-       fs.writeFileSync(
+      fs.writeFileSync(
         `backEnd/products.json`,
         JSON.stringify(this.products),
         function (err, result) {
           if (err) console.log(`error`, err);
-        }
+        },
+        2,
+        null
       );
     } else {
       this.products.push({
@@ -75,12 +61,18 @@ class ProductManager {
         price: price,
         thumbnail: thumbnail,
         code: code,
-        id:code,
+        id: code,
         stock: stock,
       });
-      fs.writeFileSync(`backEnd/products.json`, JSON.stringify(this.products), {
-        encoding: `utf-8`,
-      });
+      fs.writeFileSync(
+        `backEnd/products.json`,
+        JSON.stringify(this.products),
+        {
+          encoding: `utf-8`,
+        },
+        2,
+        null
+      );
     }
   };
 
@@ -94,25 +86,41 @@ class ProductManager {
     }
   };
 
-  async updateProduct(id, update) {
+  async deleteProduct(id) {
     await this.getProducts();
-    const productExist = this.products.findIndex(
+    const productIndex = this.products.findIndex(
       (product) => product.id === id
     );
-    if (productExist === -1) {
-      console.log(`No existe producto con el id ${id}`);
-    }else{ 
-    const updatedProduct = Object.assign(this.products[productExist], update);
-    this.products[productExist] = updatedProduct;
-    await fs.writeFile(
-      "backEnd/products.json",
-      JSON.stringify(this.products),
-      `utf-8`
-    );
+    if (productIndex === -1) {
+      throw new Error(`Product with id ${id} not found`);
     }
+    this.products.splice(productIndex, 1);
+    //await fs.writeFile(this.path, JSON.stringify(this.products), "utf-8");
+
+    fs.writeFileSync(this.path, JSON.stringify(this.products), function (err) {
+      if (err) {
+        console.log(`error`, err);
+      }
+    });
   }
 
-
+  // async updateProduct(id, update) {
+  //   await this.getProducts();
+  //   const productExist = this.products.findIndex(
+  //     (product) => product.id === id
+  //   );
+  //   if (productExist === -1) {
+  //     console.log(`No existe producto con el id ${id}`);
+  //   }else{
+  //   const updatedProduct = Object.assign(this.products[productExist], update);
+  //   this.products[productExist] = updatedProduct;
+  //   await fs.writeFile(
+  //     "backEnd/products.json",
+  //     JSON.stringify(this.products),
+  //     `utf-8`
+  //   );
+  //   }
+  // }
 }
 
 module.exports = ProductManager;
@@ -124,4 +132,3 @@ producto.addProduct("gallina", "Ave", 100, "Sin imagen", "a13", 20);
 producto.addProduct("fideos", "comida", 345345, "Sin imagen", "a21", 5);
 producto.addProduct("carne", "comida", 345345, "Sin imagen", "a56", 5);
 producto.getProducts();
-
